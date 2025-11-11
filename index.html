@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Registration Form</title>
+  <link rel="icon" type="image/png" href="https://static.thenounproject.com/png/4885400-200.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: linear-gradient(135deg, #6a11cb, #fcd825)
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 97%;
+      padding: 8px;
+      margin: 8px 0 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    select {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .qr {
+      text-align: center;
+    }
+    .qr img {
+      width: 250px;
+      height:250px
+      margin: 10px 0;
+    }
+    .submit_btn_div {
+      display: flex;
+      justify-content: center; /* center horizontally */
+      margin-top: 15px; /* optional spacing */
+    }
+    .submit_btn_div button {
+      background: #ffb703;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    /* ===== Modal Styling ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      animation: popup 0.3s ease;
+    }
+    @keyframes popup {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .close-btn {
+      background: #ffb703;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <form method="POST" enctype="multipart/form-data" accept-charset="UTF-8" id="form">
+    <h2>Registration Form</h2>
+    <label>S.No:</label>
+    <input type="text" name="S_No" required>
+    <label>Full Name:</label>
+    <input type="text" name="Name" placeholder="Enter name here" required>
+    <label>Mobile Number:</label>
+    <input type="tel" name="Mobile" id="Mobile" maxlength="10" required placeholder="Enter 10-digit mobile number">
+    <label>Age:</label>
+    <input type="number" name="Age" placeholder="Enter your Age" min="1" max="100" required>
+    <label>Qualification:</label>
+    <input type="text" name="Qualification" placeholder="Enter your qualification">
+    <label>Education Status:</label>
+    <select name="Education_status" required>
+      <option value="">Select</option>
+      <option value="Continue">Continue</option>
+      <option value="Break">Break</option>
+    </select>
+    <label>Marital Status:</label>
+    <select name="Marital_status" required>
+      <option value="">Select</option>
+      <option value="Unmarried">Unmarried</option>
+      <option value="Married">Married</option>
+    </select>
+    <label>Gender:</label>
+    <select name="Gender" required>
+      <option value="">Select</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+    <label>Address:</label>
+    <textarea name="Address" rows="3" placeholder="Enter your full address with city and state" required></textarea>
+    <label>Payment:</label>
+    <div class="qr">
+      <p>Scan the QR code below to make your payment:</p>
+      <a href="upi://pay?pa=kalegarirshad@ybl&pn=IRSHAD%20RAMAJAN%20KALEG&cu=INR">
+          <img src="QR.jpeg" alt="Payment QR Code"><br>
+      </a>
+    </div>
+    <label>Upload Payment Screenshot:</label>
+    <input type="file" name="Payment_screenshot" accept="image/*" required>
+    <!-- <input type="text" name="payment_url" > -->
+    <div class="submit_btn_div">
+        <button type="submit">Submit</button>
+    </div>
+  </form>
+
+  <!-- Modal -->
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <h3>✅ Form Submitted Successfully!</h3>
+      <p>Thank you for your submission.</p>
+      <button class="close-btn" id="closeModal">OK</button>
+    </div>
+  </div>
+<script>
+    const form = document.getElementById("form");
+    const mobileInput = document.getElementById("Mobile");
+    const modal = document.getElementById("successModal");
+    const closeModal = document.getElementById("closeModal");
+
+    // ✅ Allow only numbers in Mobile field and restrict to 10 digits
+    mobileInput.addEventListener("input", function() {
+      this.value = this.value.replace(/[^0-9]/g, ""); // only numbers
+      if (this.value.length > 10) this.value = this.value.slice(0, 10);
+    });
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      // Extra Validation for Mobile
+      if (mobileInput.value.length !== 10) {
+        alert("Please enter a valid 10-digit mobile number.");
+        return;
+      }
+
+      const formData = new FormData(form);
+
+      fetch("https://getform.io/f/bqoerqvb", {
+          method: "POST",
+          body: formData,
+          headers: { "Accept": "application/json" },
+      })
+      .then(() => {
+          form.reset();
+          modal.style.display = "flex"; // show modal
+      })
+      .catch(() => {
+          alert("Submission failed! Please try again.");
+      });
+    });
+
+    // Close Modal
+    closeModal.addEventListener("click", () => {
+      modal.style.display = "none";
+       location.reload();
+    });
+</script>
+</body>
+</html>
