@@ -105,6 +105,20 @@
       margin-top: 10px;
     }
   </style>
+  <script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.onkeydown = function(e) {
+      if (e.keyCode == 123) { // F12
+        return false;
+      }
+      if (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) {
+        return false;
+      }
+      if (e.ctrlKey && e.keyCode == 85) {
+        return false;
+      }
+    };
+  </script>
 </head>
 <body>
   <form method="POST" enctype="multipart/form-data" accept-charset="UTF-8" id="form">
